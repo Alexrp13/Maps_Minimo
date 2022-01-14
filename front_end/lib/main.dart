@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -64,10 +64,25 @@ class MapSampleState extends State<MapSample> {
         icon: Icon(Icons.directions_boat),
       ),
     );
+
+    Future<void> _getUbicacionActual() async {
+      //objeto geolocator que obtendra la ubicaciionactual
+      final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
+      geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((Position position) async {setState(() {
+          //imprimir la posicion actual en log
+          print(position);
+        });
+        //agregar marcador con ubicacion actual
+        _markers.add(
+          Marker(
+            markerId: MarkerId('mi_ubicacion'),
+            position: LatLng(position.latitude, position.longitude),
+          ),
+        );
+
   }
 
-  Future<void> _goToTheLake() async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  }
 }
+
+
